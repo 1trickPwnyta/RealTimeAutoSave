@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Timers;
 using RimWorld;
 using Verse;
 using HarmonyLib;
@@ -10,21 +10,31 @@ namespace RealTimeAutoSave
     [HarmonyPatch("AutosaverTick")]
     public static class Patch_Autosaver
     {
-        // Each Autosaver instance manages its own state so we will manage our state per Autosaver instance
-        private static Dictionary<Autosaver, DateTime> lastSaved = new Dictionary<Autosaver, DateTime>();
+        private static Timer timer = new Timer(15000);
+        private static Autosaver autosaver;
+
+        static Patch_Autosaver()
+        {
+            timer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+            timer.Enabled = true;
+        }
+
+        private static void OnTimedEvent(object source, ElapsedEventArgs e)
+        {
+            if (autosaver != null)
+            {
+                LongEventHandler.QueueLongEvent(new Action(autosaver.DoAutosave), "Autosaving", false, null, true);
+            }
+        }
 
         public static bool Prefix(Autosaver __instance)
         {
-            if (!lastSaved.ContainsKey(__instance))
+            // Check if we have a new instance of Autosaver
+            if (__instance != autosaver)
             {
-                lastSaved[__instance] = DateTime.Now;
-            }
-
-            // Check how long it has been since this Autosaver instance was last used to save and save if necessary
-            if ((DateTime.Now - lastSaved[__instance]).TotalSeconds > 15)
-            {
-                LongEventHandler.QueueLongEvent(new Action(__instance.DoAutosave), "Autosaving", false, null, true);
-                lastSaved[__instance] = DateTime.Now;
+                timer.Stop();
+                timer.Start();
+                autosaver = __instance;
             }
 
             // Prevent normal AutosaverTick function
