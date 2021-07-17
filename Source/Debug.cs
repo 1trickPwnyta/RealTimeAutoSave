@@ -5,7 +5,7 @@
         public static void Log(string message)
         {
 #if DEBUG
-            Verse.Log.Message("[Real Time Auto Save] " + message);
+            Verse.Log.Message($"[{RealTimeAutoSaveMod.PACKAGE_NAME}] {message}");
 #endif
         }
     }

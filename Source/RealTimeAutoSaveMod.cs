@@ -1,25 +1,35 @@
-﻿using Verse;
-using HarmonyLib;
+﻿using System;
 using System.Threading.Tasks;
-using System;
+using UnityEngine;
+using Verse;
+using HarmonyLib;
 
 namespace RealTimeAutoSave
 {
-    [StaticConstructorOnStartup]
-    public static class Mod
+    public class RealTimeAutoSaveMod : Mod
     {
-        const string PACKAGE_ID = "realtimeautosave.1trickPonyta";
-        const int REATTEMPT_DELAY = 5000;
-        const int INTERVAL_DELAY = 15000;
+        public const string PACKAGE_ID = "realtimeautosave.1trickPonyta";
+        public const string PACKAGE_NAME = "Real Time Auto Save";
+        private const int REATTEMPT_DELAY = 5000;
 
-        static Mod()
+        public RealTimeAutoSaveMod(ModContentPack content) : base(content)
         {
+            GetSettings<RealTimeAutoSaveSettings>();
+
             var harmony = new Harmony(PACKAGE_ID);
             harmony.PatchAll();
 
-            Log.Message("[Real Time Auto Save] Loaded.");
+            Log.Message($"[{PACKAGE_NAME}] Loaded.");
 
-            Task.Delay(INTERVAL_DELAY).ContinueWith(t => TryAutosave());
+            Task.Delay(RealTimeAutoSaveSettings.IntervalDelay).ContinueWith(t => TryAutosave());
+        }
+
+        public override string SettingsCategory() => PACKAGE_NAME;
+
+        public override void DoSettingsWindowContents(Rect inRect)
+        {
+            base.DoSettingsWindowContents(inRect);
+            RealTimeAutoSaveSettings.DoSettingsWindowContents(inRect);
         }
 
         private static bool TryAutosave()
@@ -31,7 +41,7 @@ namespace RealTimeAutoSave
                 if (Current.Game != null && !Find.WindowStack.WindowsForcePause && !LongEventHandler.ForcePause)
                 {
                     LongEventHandler.QueueLongEvent(new Action(Find.Autosaver.DoAutosave), "Autosaving", false, null, true);
-                    delay = INTERVAL_DELAY;
+                    delay = RealTimeAutoSaveSettings.IntervalDelay;
                     return true;
                 }
                 return false;
