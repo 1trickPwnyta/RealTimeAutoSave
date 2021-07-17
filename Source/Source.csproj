@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Debug.cs" />
     <Compile Include="Mod.cs" />
     <Compile Include="Patch_Autosaver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
