@@ -10,18 +10,22 @@ namespace RealTimeAutoSave
     {
         public const string PACKAGE_ID = "realtimeautosave.1trickPonyta";
         public const string PACKAGE_NAME = "Real Time Auto Save";
-        private const int REATTEMPT_DELAY = 5000;
+
+        public static RealTimeAutoSaveSettings Settings;
 
         public RealTimeAutoSaveMod(ModContentPack content) : base(content)
         {
-            GetSettings<RealTimeAutoSaveSettings>();
+            Settings = GetSettings<RealTimeAutoSaveSettings>();
 
             var harmony = new Harmony(PACKAGE_ID);
             harmony.PatchAll();
 
             Log.Message($"[{PACKAGE_NAME}] Loaded.");
 
-            Task.Delay(RealTimeAutoSaveSettings.IntervalDelay).ContinueWith(t => TryAutosave());
+            if (RealTimeAutoSaveSettings.AutoSaveMode == AutoSaveMode.RealTime)
+            {
+                RealTimeAutosaver.ScheduleAutosave();
+            }
         }
 
         public override string SettingsCategory() => PACKAGE_NAME;
@@ -30,31 +34,6 @@ namespace RealTimeAutoSave
         {
             base.DoSettingsWindowContents(inRect);
             RealTimeAutoSaveSettings.DoSettingsWindowContents(inRect);
-        }
-
-        private static bool TryAutosave()
-        {
-            Debug.Log("TryAutosave called.");
-            int delay = REATTEMPT_DELAY;
-            try
-            {
-                if (Current.Game != null && !Find.WindowStack.WindowsForcePause && !LongEventHandler.ForcePause)
-                {
-                    LongEventHandler.QueueLongEvent(new Action(Find.Autosaver.DoAutosave), "Autosaving", false, null, true);
-                    delay = RealTimeAutoSaveSettings.IntervalDelay;
-                    return true;
-                }
-                return false;
-            }
-            catch (Exception e)
-            {
-                Debug.Log(e.ToString());
-                return false;
-            }
-            finally
-            {
-                Task.Delay(delay).ContinueWith(t => TryAutosave());
-            }
         }
     }
 }

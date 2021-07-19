@@ -1,15 +1,29 @@
-﻿using RimWorld;
+﻿using System;
+using RimWorld;
+using Verse;
 using HarmonyLib;
 
 namespace RealTimeAutoSave
 {
     [HarmonyPatch(typeof(Autosaver))]
     [HarmonyPatch("AutosaverTick")]
-    public static class Patch_Autosaver
+    public static class Patch_Autosaver_AutosaverTick
     {
+        private static int ticksSinceSave;
+
         public static bool Prefix(Autosaver __instance)
         {
-            // Prevent normal AutosaverTick function
+            if (RealTimeAutoSaveSettings.AutoSaveMode == AutoSaveMode.InGame)
+            {
+                ticksSinceSave++;
+                if (ticksSinceSave >= RealTimeAutoSaveSettings.InGameInterval * 60000)
+                {
+                    if (RealTimeAutosaver.TryAutosave())
+                    {
+                        ticksSinceSave = 0;
+                    }
+                }
+            }
             return false;
         }
     }
