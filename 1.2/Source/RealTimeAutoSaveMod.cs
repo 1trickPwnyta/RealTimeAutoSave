@@ -9,7 +9,7 @@ namespace RealTimeAutoSave
     public class RealTimeAutoSaveMod : Mod
     {
         public const string PACKAGE_ID = "realtimeautosave.1trickPonyta";
-        public const string PACKAGE_NAME = "Real Time Auto Save";
+        public const string PACKAGE_NAME = "Real-Time Auto Save";
 
         public static RealTimeAutoSaveSettings Settings;
 

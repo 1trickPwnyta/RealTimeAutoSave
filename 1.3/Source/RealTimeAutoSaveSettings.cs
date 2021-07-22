@@ -27,13 +27,17 @@ namespace RealTimeAutoSave
             listingStandard.Begin(inRect);
             listingStandard.Label("RealTimeAutoSave_SettingsAutosaveInterval".Translate());
 
-            if (listingStandard.RadioButton_NewTemp("RealTimeAutoSave_SettingsInGameInterval".Translate(), AutoSaveMode == AutoSaveMode.InGame))
+            if (listingStandard.RadioButton("RealTimeAutoSave_SettingsInGameInterval".Translate(), AutoSaveMode == AutoSaveMode.InGame))
             {
                 AutoSaveMode = AutoSaveMode.InGame;
                 RealTimeAutosaver.CancelAutosave();
             }
             if (AutoSaveMode == AutoSaveMode.InGame)
             {
+                // Show the vanilla-ish autosave interval selection drop down, but with one difference: 
+                // we gives ours a (fake) title of "" (empty string), which has no UI effect but allows 
+                // us to differentiate this drop down from the actual vanilla drop down when we patch
+                // out the vanilla one
                 buffer = InGameInterval.ToString();
                 string days = "Days".Translate();
                 string day = "Day".Translate().ToLower();
@@ -63,19 +67,21 @@ namespace RealTimeAutoSave
                 }
             }
 
-            if (listingStandard.RadioButton_NewTemp("RealTimeAutoSave_SettingsRealTimeInterval".Translate(), AutoSaveMode == AutoSaveMode.RealTime))
+            if (listingStandard.RadioButton("RealTimeAutoSave_SettingsRealTimeInterval".Translate(), AutoSaveMode == AutoSaveMode.RealTime))
             {
                 AutoSaveMode = AutoSaveMode.RealTime;
                 RealTimeAutosaver.ScheduleAutosave();
             }
             if (AutoSaveMode == AutoSaveMode.RealTime)
             {
+                // Show the real-time interval input box
                 buffer = RealTimeInterval.ToString();
                 listingStandard.IntEntry(ref RealTimeInterval, ref buffer);
                 RealTimeInterval = Math.Max(RealTimeInterval, 1);
+                RealTimeAutosaver.ScheduleAutosave();
             }
 
-            if (listingStandard.RadioButton_NewTemp("RealTimeAutoSave_SettingsNone".Translate(), AutoSaveMode == AutoSaveMode.None))
+            if (listingStandard.RadioButton("RealTimeAutoSave_SettingsNone".Translate(), AutoSaveMode == AutoSaveMode.None))
             {
                 AutoSaveMode = AutoSaveMode.None;
                 RealTimeAutosaver.CancelAutosave();
@@ -92,6 +98,8 @@ namespace RealTimeAutoSave
         }
     }
 
+    // Window that is shown when clicking the patched-in Configure button in the options 
+    // dialog. It just mimics the mod settings dialog.
     public class RealTimeAutoSaveSettingsDialog : Window
     {
         public RealTimeAutoSaveSettingsDialog()

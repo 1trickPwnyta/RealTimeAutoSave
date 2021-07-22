@@ -20,9 +20,15 @@ namespace RealTimeAutoSave
 
         public static void ScheduleAutosave(int? delay = null)
         {
+            if (delay == null && timer.Enabled && timer.Interval == RealTimeAutoSaveSettings.RealTimeInterval * 1000 * 60)
+            {
+                return;
+            }
+
             timer.Stop();
-            timer.Interval = delay != null ? (int) delay : RealTimeAutoSaveSettings.RealTimeInterval * 1000 * 60;
+            timer.Interval = delay != null ? (int)delay : RealTimeAutoSaveSettings.RealTimeInterval * 1000 * 60;
             timer.Start();
+            Debug.Log($"Set timer for {timer.Interval}");
         }
 
         public static void CancelAutosave()
@@ -43,8 +49,10 @@ namespace RealTimeAutoSave
                 {
                     LongEventHandler.QueueLongEvent(new Action(Find.Autosaver.DoAutosave), "Autosaving", false, null, true);
                     delay = null;
+                    Debug.Log("TryAutosave succeeded.");
                     return true;
                 }
+                Debug.Log("TryAutosave skipped.");
                 return false;
             }
             catch (Exception e)
