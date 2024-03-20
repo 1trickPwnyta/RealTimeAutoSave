@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+	<RealTimeAutoSave_SettingsAutosaveInterval>Autosave interval</RealTimeAutoSave_SettingsAutosaveInterval>
+	<RealTimeAutoSave_SettingsInGameInterval>In in-game days: </RealTimeAutoSave_SettingsInGameInterval>
+	<RealTimeAutoSave_SettingsRealTimeInterval>In real-time minutes: </RealTimeAutoSave_SettingsRealTimeInterval>
+	<RealTimeAutoSave_SettingsNone>None</RealTimeAutoSave_SettingsNone>
+	<RealTimeAutoSave_Configure>Configure</RealTimeAutoSave_Configure>
+</LanguageData>
