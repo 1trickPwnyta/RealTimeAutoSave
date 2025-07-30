@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using System.Timers;
 using Verse;
 
@@ -32,7 +31,6 @@ namespace RealTimeAutoSave
             timer.Stop();
             timer.Interval = delay != null ? (int) delay : RealTimeAutoSaveSettings.RealTimeInterval * 1000 * 60;
             timer.Start();
-            Debug.Log($"Set timer for {timer.Interval}");
         }
 
         public static void CancelAutosave()
@@ -42,8 +40,6 @@ namespace RealTimeAutoSave
 
         public static bool TryAutosave()
         {
-            Debug.Log("TryAutosave called.");
-
             timer.Stop();
             int? delay = MONITORING_INTERVAL;
 
@@ -55,17 +51,14 @@ namespace RealTimeAutoSave
                     // Perform the autosave and set delay to null in order to use the interval in the mod settings
                     LongEventHandler.QueueLongEvent(new Action(Find.Autosaver.DoAutosave), "Autosaving", false, null, true);
                     delay = null;
-                    Debug.Log("TryAutosave succeeded.");
                     return true;
                 }
 
                 // When skipped, we use the monitoring interval to try again in a short while
-                Debug.Log("TryAutosave skipped.");
                 return false;
             }
             catch (Exception e)
             {
-                // This shouldn't happen
                 Debug.Log(e.ToString());
                 return false;
             }

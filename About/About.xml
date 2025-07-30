@@ -3,7 +3,7 @@
 	<name>Real-Time Auto Save</name>
 	<author>1trickPwnyta</author>
 	<packageId>realtimeautosave.1trickPonyta</packageId>
-	<modVersion IgnoreIfNoMatchingField="True">1.0.3</modVersion>
+	<modVersion IgnoreIfNoMatchingField="True">1.0.4</modVersion>
 	<supportedVersions>
 		<li>1.2</li>
 		<li>1.3</li>
@@ -17,6 +17,7 @@ Allows you to configure auto-saves to happen on a real-time interval rather than
 Use at your own risk!! I am not responsible if your auto-saves aren't working and your game crashes and you lose hours of progress.
 
 === Updates ===
+07/29/2025: Remove debug log messages
 06/14/2025: Updated to 1.6
 03/20/2024: Updated to 1.5
 10/25/2022: Updated to 1.4
